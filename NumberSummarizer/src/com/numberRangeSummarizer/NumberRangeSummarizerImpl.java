@@ -2,139 +2,69 @@ package com.numberRangeSummarizer;
 
 import java.util.*;
 
-/**
- *
- * TODO : Add class comment
- *
- */
-public class NumberSummarizerImpl implements NumberRangeSummarizer
-{
-    public static void main(String[] args)
-    {
-        NumberSummarizerImpl nr = new NumberSummarizerImpl();
-        String input = "99,100,101,102,103,104,107,108,109,110,115,188,189,192,20";
-        String s = "I I AM AM GOING TO BE IMPACT IMPACT";
+public class NumberRangeSummarizerImpl implements NumberRangeSummarizer {
+    public static void main(String[] args) {
+        NumberRangeSummarizerImpl in = new NumberRangeSummarizerImpl();
+        String input = "1,3,6,7,8,12,13,14,15,21,22,23,24,31";
         try {
-            Collection<Integer> collectionInput = (List<Integer>)nr.collect(input);
-            String range = nr.summarizeCollection(collectionInput);
-
+            // Collect the input string
+            Collection<Integer> collectionInput = (List<Integer>)in.collect(input);
+            // Summarize the input
+            String range = in.summarizeCollection(collectionInput);
+            // Print the summarized input
             System.out.println(range);
         } catch (ClassCastException exc) {
-            System.out.println("Please review the string there might be a character");
+            System.out.println("Can't resolve the string");
         }
+    } 
 
-
-    }
-
-    /**
-     *
-     * TODO : Add method comment
-
-     * @param input
-     * @return
-     *
-     */
+    // Collect the input string and convert it to a collection of integers
     public Collection<Integer> collect(String input) {
-        //Separate the numbers with ","
-        String[] arrayOfString = input.split(",");
-        int[] integers = new int[arrayOfString.length];
-//
-        for (int i = 0; i < arrayOfString.length; i++) {
-            integers[i] = Integer.parseInt(arrayOfString[i]);
+        String[] strArr = input.split(","); // Separate the string where there is a comma
+        int[] integers = new int[strArr.length]; // Initialise an array of int to store the converted string
+
+        // Convert array of strings to array of int
+        for (int i = 0; i < strArr.length; i++) {
+            integers[i] = Integer.parseInt(strArr[i]);
         }
 
-        // sorting the numbers
-
+        // Sort the elements in our array
         Arrays.sort(integers);
-        List<Integer> list = new ArrayList<>();
 
-        for (int i = 0; i < integers.length; i++) {
-            list.add(integers[i]);
-
+        // Use a LinkedHashSet to ensure the collection has unique values and is ordered based on insertion
+        Collection<Integer> collection = new LinkedHashSet<>();
+        for (int i : integers) {
+            collection.add(i);
         }
-
-
-        return list;
-
+        return collection;
     }
 
-    /**
-     *
-     * TODO : Add method comment
-     *
-     * @param input
-     * @return
-     *
-     */
-    public String summarizeCollection(Collection<Integer> input)
-    {
-        int count = 0;
-        //hOLD the range
-        StringBuilder sb = new StringBuilder();
-
-
-        //collection class created
+    // Summarize the collection of integers and returns a string with the ranges
+    public String summarizeCollection(Collection<Integer> input) {
         ArrayList<Integer> inputList = new ArrayList<Integer>(input);
-        int length = inputList.size();
+        List<String> output = new ArrayList<>();
 
+        // Add a sentinel value to the end of the list to handle the last range
+        inputList.add(0);
+        int count = 0;
 
-        int start;
-        int next;
-        for (int a = 0; a < length; a++)
-        {
-            // CATERS FOR THE LAST ELEMENT OF THE LIST
-            if (a == length - 1)
-            {
-                if(inputList.get(length-2) != inputList.get(length-1))
-                {
-                    sb.append(inputList.get(a) + ",");
-                }
-                break;
-            }
-        // START IS FIRST ELEMENT
-            start = (Integer)inputList.get(a);
-
-            next = (Integer)inputList.get(a + 1);
-            if (next == start + 1)
-            {
-                count++;
-                int lowestBound = start;
-
-                //GENERALLY IF THERE IS A CONSISTENT RANGE IN THE LIST APEND THE BEGINING AND END OF IT ELSE BREAK FROM THE LOOP
-
-                // Loop until the range breaks - where the loop breaks is your upper bound for the current range.
-                // TAKING THE BEGINING OF THE RANGE AND WHERE IT ENDS!!!
-                for (int i = a + 1; ; i++)
-                {
-                    start = (Integer)inputList.get(i);
-                    next = (Integer)inputList.get(i + 1);
-
-                    if (next == start + 1)
-                    {
-                        count++;
-                    }
-                    else
-                    {
-                        a = i;
-                        if (count != 0)
-                        {
-                            sb.append(lowestBound + " - " + (Integer)inputList.get(i) + ", ");
-                        }
-                        break;
-                    }
+        // Loop through the sorted list comparing adjacent values to determine the ranges
+        for (int i = 0; i < inputList.size() - 1; i++) {
+            int m = inputList.get(i);
+            count++;
+            if (m + 1 != inputList.get(i + 1)) {
+                if (count == 1) {
+                    // Add individual integers to the output list
+                    output.add(String.valueOf(m));
+                } else {
+                    // Add integer range to the output list
+                    output.add((m - count + 1) + "-" + m);
                 }
                 count = 0;
             }
-            else
-            {
-                // goes through the the ones with no raNGE
-                sb.append(start + ", ");
-            }
         }
-        //CONCATENATION
-        String ranges = sb.toString();
-        return ranges.substring(0, ranges.length() - 1);
+
+        // Join the output list as a comma-separated string
+        return String.join(", ", output);
     }
-
-
 }
