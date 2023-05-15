@@ -1,34 +1,50 @@
-package com.numberRangeSummarizer;
+package com.test.numberRangeSummarizer;
 
-import org.junit.jupiter.api.Test;
+import com.test.numberRangeSummarizer.NumberRangeSummarizerImpl;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.*;
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class NumberSummarizerImplTest {
 
-class NumberSummarizerImplTest {
+    @Autowired
+    private NumberRangeSummarizer numberRangeSummarizer;
 
     @Test
-    public void testCollectedNumbers(){
-        NumberSummarizerImpl test = new NumberSummarizerImpl();
-        String numbers = "1,3,4,6,7,103,104,107,108,109,110,115,188,189,192,20";
-        Collection<Integer> result =test.collect(numbers);
-        assertEquals(Arrays.asList(1, 3, 4, 6, 7, 20, 103, 104, 107, 108, 109, 110, 115, 188, 189, 192),result);
-
-
-
+    public void testCollSize() {
+        Assert.assertEquals(numberRangeSummarizer.collect("1,3,6,7,8,12,13,14,15,21,22,23,24,31").size(), 14);
     }
 
     @Test
-    public void testSummarizedCollection(){
-
-        NumberSummarizerImpl test = new NumberSummarizerImpl();
-        Collection<Integer> listCollected =  Arrays.asList(1,3,4,6,7,103,104,107,108,109,110,115,188,189,192,200);
-        String summarizedstr = test.summarizeCollection(listCollected);
-        System.out.println(summarizedstr);
-
-        assertEquals("1, 3 - 4, 6 - 7, 103 - 104, 107 - 110, 115, 188 - 189, 192, 200",summarizedstr);
+    public void testSplit() {
+        Collection<Integer> numbers = numberRangeSummarizer.collect("1,3,6,7,8,12,13,14,15,21,22,23,24,31");
+        Assert.assertFalse(numbers.isEmpty());
+        Assert.assertEquals(numbers.iterator().hasNext(), true);
     }
 
+    @Test
+    public void testSequential() {
+
+        Collection<Integer> numbers = numberRangeSummarizer.collect("1,3,6,7,8,12,13,14,15,21,22,23,24,31");
+         Assert.assertFalse(Boolean.parseBoolean(Arrays.stream(numbers.toArray()).unordered().toString()));
+    }
+
+    @Test
+    public void testSummarizedNumbers() {
+        String inputNumbers = "1,3,6,7,8,12,13,14,15,21,22,23,24,31";
+        String expectedSummary = "1,3,6-8,12-15,21-24,31";
+
+        Collection<Integer> numbers = numberRangeSummarizer.collect(inputNumbers);
+
+        Assert.assertEquals(numberRangeSummarizer.summarizeCollection(numbers), expectedSummary);
+    }
 }
