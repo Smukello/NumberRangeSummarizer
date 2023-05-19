@@ -15,15 +15,18 @@ import java.util.Collection;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class NumberSummarizerImplTest {
-
+    
+    // Autowire the implementation of NumberRangeSummarizer interface
     @Autowired
     private NumberRangeSummarizer numberRangeSummarizer;
 
+    // Test to check the size of the collection returned by collect method
     @Test
     public void testCollSize() {
         Assert.assertEquals(numberRangeSummarizer.collect("1,3,6,7,8,12,13,14,15,21,22,23,24,31").size(), 14);
     }
 
+    // Test to check if the numbers are being correctly split and added to the collection
     @Test
     public void testSplit() {
         Collection<Integer> numbers = numberRangeSummarizer.collect("1,3,6,7,8,12,13,14,15,21,22,23,24,31");
@@ -31,6 +34,7 @@ public class NumberSummarizerImplTest {
         Assert.assertEquals(numbers.iterator().hasNext(), true);
     }
 
+    // Test to check if the numbers are being stored sequentially in the collection
     @Test
     public void testSequential() {
 
@@ -38,6 +42,7 @@ public class NumberSummarizerImplTest {
          Assert.assertFalse(Boolean.parseBoolean(Arrays.stream(numbers.toArray()).unordered().toString()));
     }
 
+    // Test to check if the numbers are being summarized correctly
     @Test
     public void testSummarizedNumbers() {
         String inputNumbers = "1,3,6,7,8,12,13,14,15,21,22,23,24,31";
